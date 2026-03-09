@@ -32,7 +32,7 @@
 
 #show: project.with(
   meta: (
-    project-group: "Master 1 CNS-SR",
+    project-group: "Master I CNS-SR",
     participants: (
       "Paul VEROT, 20212888",
       "Tony LENG, 20221861"
@@ -44,12 +44,12 @@
     ),
     supervisors: "Mehdi Denou",
     //field-of-study: "CS",
-    project-type: "Administration avec Cumulus et Ansible"
+    project-type: "Semestre 2"
   ),
 
   fr: (
-    title: "Projet ADMINSYRES2-2026",
-    theme: "",
+    title: "Projet d'Administration des Systèmes et des Réseaux II",
+    theme: "Cumulus",
     abstract: "",
   ),
 

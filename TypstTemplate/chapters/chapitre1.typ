@@ -219,8 +219,7 @@ Ces commandes servent à :
 + `net commit`
   - Valide et applique toutes les modifications précédentes, analogue à un commit sur Git
 
-\
-\
+\ \ \
 Configuration des IP sur les machines :  \
 Dans le fichier ```bash /etc/network/interfaces ``` \  
 #underline("Machine 1")
@@ -246,6 +245,7 @@ iface ens36 inet static
 #figure(
   image("../figures/1/30-3.png", width: 80%)
 )
+
 
 #underline("Serveur NFS")
 ```bash
@@ -286,3 +286,88 @@ On peut vérifier l'état du Bond :
 #figure(
   image("../figures/1/catbond.png", width: 50%)
 )
+
+\ \ \
+Configuration du parefeu : \
+#underline("Sur Switch-3 :")\
+
+Dans ```bash /etc/cumulus/acl/policy.d/50_custom.rules 
+[iptables]
+-A FORWARD -p tcp -s 192.168.30.3 -d 192.168.10.3 -j DROP
+-A FORWARD -p tcp -s 192.168.10.3 -d 192.168.30.3 -j DROP
+
+-A FORWARD -p icmp -s 192.168.30.3 -d 192.168.10.3 -j DROP
+-A FORWARD -p icmp -s 192.168.10.3 -d 192.168.30.3 -j DROP
+``` 
+\
+Ces règles de parefeu ont pour but de détruire tout paquet entre les deux réseau, afin d'assurer l'isolation. \
+On peut tester que les machines ne peuvent pas se ping : 
+#figure(
+  image("../figures/1/noping.png", width: 80%)
+)
+On peut voir que la Machine-2 peut communiquer avec le serveur NFS mais pas avec la Machine-1
+
+\
+Configuration du partage NFS :  \
+#underline("Sur le serveur NFS :")\
+\
+```bash 
+apt install nfs-kernel-server
+
+mkdir /machine1
+mkdir /machine2
+
+chown nobody:nogroup /machine1 /machine2
+chmod 777 /machine1 /machine2
+```
+\
+\
+dans `/etc/exports` : 
+```bash
+    /machine1 192.168.10.0/24(rw,sync,no_subtree_check)
+    /machine2 192.168.30.0/24(rw,sync,no_subtree_check)
+```
+\
+```bash
+exportfs -a 
+systemctl restart nfs-kernel-server
+```
+\ \
+```bash
+#! Machine-1  
+mkdir /mnt/backup_m1
+mount -t nfs -o vers=4 192.168.20.3:/machine1 /mnt/backup_m1
+```
+\ \
+On peut ensuite tester que le transfer fonctionne en créant un fichier dans `/mnt/backup_m1` et vérifier qu'il apparait bien sur le serveur NFS
+\
+```bash 
+#! Machine-1 
+touch /mnt/backup_m1/test.ms
+
+#! Serveur NFS 
+ls -la /machine1
+```
+#figure(
+  grid(
+    image("../figures/1/touch.png", width: 80%),
+    
+    image("../figures/1/receive-touch.png", width: 80%)
+  ), 
+  caption: [En haut la création du fichier `test.ms` dans le dossier `/mnst/backup_m1` sur la Machine-1, en bas on constate la présence de `test.ms` dans `/machine1` sur le Serveur-NFS]
+  
+)
+\
+On peut aussi verifier que l'on ne peut pas monter le mauvais share si on ne fait pas partie du réseau désigné : 
+\
+```bash
+#! Machine-2 
+mkdir /mnt/backup_m2
+mount -t nfs -o vers=4 192.168.20.3:/machine1 /mnt/backup_m2
+```
+#figure(
+  image("../figures/1/connect-fail.png", width: 80%)
+)
+\ \
+Comme attendu, la Machine-2 ne peut se connecter que sur son partage et pas à celui dédié à la Machine-1. 
+
