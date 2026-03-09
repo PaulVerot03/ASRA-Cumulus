@@ -13,16 +13,6 @@
   body
 }
 
-// revision to use for add, rmv and change
-
-// it is also possible to apply show rules to the entire project
-// it is more or less a search and replace when applying it to a string.
-// see https://typst.app/docs/reference/styling/#show-rules
-// #show "naive": "naïve"
-// #show "Dijkstra's": smallcaps
-
-// Initialize acronyms / glossary
-// See https://typst.app/universe/package/glossy for additional details.
 
 #show: init-glossary.with(
   (
@@ -48,52 +38,27 @@
       "Tony LENG, 20221861"
     ),
     email: (
-      "pauljeanlouisverot@protonmail.com", "20212888@etud.univ-evry.fr",
+      "paul@paulverot.fr", "20212888@etud.univ-evry.fr",
+      "lengtony91@gmail.com", "20221861@etud.univ-evry.fr"
 
     ),
-    supervisors: "",
+    supervisors: "Mehdi Denou",
     //field-of-study: "CS",
-    project-type: ""
+    project-type: "Administration avec Cumulus et Ansible"
   ),
 
   fr: (
-    title: "",
+    title: "Projet ADMINSYRES2-2026",
     theme: "",
     abstract: "",
   ),
 
-  // clear-double-page: false,
-
 )
-= Partage Réseau NFS 
-```bash 
-```
-// = Preface
-// #lorem(100)
-
-//#outline(depth: 2)
-
-//#note-outline()
-
-// use `show: mainmatter.with(skip-double: false)` to omit double page skips
-// the same syntax appylies to 'chapters', 'backmatter' and 'appendix'.
-//#show: mainmatter
-//#include "chapters/introduction.typ"
-// include : #import "../classic-evry-report/template/setup/macros.typ": * at the top of the files in the subdirs
-//#show: chapters
-//#include "chapters/problem-analysis.typ"
-//#include "chapters/custom-macros.typ"
-
-// in the backmatter, the chapter numbers are removed again
-// show the references here, along with other backmatter content, like a list of acronyms
-//#show: backmatter
-//#include "chapters/conclusion.typ"
-
-// the documentation for this package includes a few different themes
-// or even allows you to use your own custom one
-//#glossary(title: "List of Acronyms")
-//#bibliography("references.bib", title: "References")
-
-//#show: appendix
-//#include "appendices/scripting.typ"
+#show: mainmatter.with(skip-double: false)
+#set outline.entry(fill: line(length: 100%))
+#outline(title: "Chapitres")
+#include("chapters/chapitre1.typ")
+#include("chapters/chapitre2.typ")
+#include("chapters/chapitre3.typ")
+#include("chapters/chapitre4.typ")
 
