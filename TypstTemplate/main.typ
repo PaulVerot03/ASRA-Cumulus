@@ -34,12 +34,13 @@
   meta: (
     project-group: "Master I CNS-SR",
     participants: (
-      "Paul VEROT, 20212888",
-      "Tony LENG, 20221861"
+      "Tony LENG, 20221861",
+      "Paul VEROT, 20212888"
+      
     ),
     email: (
-      "paul@paulverot.fr", "20212888@etud.univ-evry.fr",
-      "lengtony91@gmail.com", "20221861@etud.univ-evry.fr"
+      "lengtony91@gmail.com", "20221861@etud.univ-evry.fr",
+      "paul@paulverot.fr", "20212888@etud.univ-evry.fr"
 
     ),
     supervisors: "Mehdi Denou",
@@ -49,7 +50,7 @@
 
   fr: (
     title: "Projet d'Administration des Systèmes et des Réseaux II",
-    theme: "Cumulus",
+    theme: "Architecture de réseaux et commutation",
     abstract: "",
   ),
 
