@@ -5,7 +5,7 @@
 }
 = Partage Réseau NFS
 #figure(
-  image("../figures/1/maquete1.drawio.png", width: 80%),
+  image("../figures/archi1.svg", width: 80%),
   caption: [Maquette du réseau.]
 )
 
@@ -58,6 +58,13 @@ SW3
   adapter 2 : lan segment 1
   adapter 3 : lan segment 3
 ```
+\
+Toutes les machines hors switch sont des VM Debian 13 n'ayant pas de Display Manager installé. Chacune avec 2 coeurs et 677 MiB de RAM.
+#figure(
+  image("../figures/fetch.png", width: 50%),
+  caption: [```bash screenfetch```]
+)
+
 \ 
 
 #smallcaps[Sur les machines :] \
@@ -276,6 +283,7 @@ iface ens37 inet manual
   caption: [Configuration IP du Serveur NFS.]
 )
 On peut vérifier l'état du Bond : 
+```bash cat /proc/net/bonding/bond0 ```
 #figure(
   image("../figures/1/catbond.png", width: 50%),
   caption: [Vérification de l'état du lien d'agrégation (bond).]
