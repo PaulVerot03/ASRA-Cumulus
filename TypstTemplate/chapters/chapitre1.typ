@@ -9,7 +9,7 @@
   caption: [Maquette du réseau.]
 )
 
-#strong[Résumé des contraintes et des demandes:]
+== Résumé des contraintes et des demandes:
 
 - Les Switchs 1 et 2 n'utilisent que des fonctions de niveau 2.
 - Le Switch 3 peut utiliser des fonctions de niveau 3.
