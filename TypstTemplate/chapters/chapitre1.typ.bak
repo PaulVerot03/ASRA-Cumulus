@@ -5,7 +5,7 @@
 }
 = Partage Réseau NFS
 #figure(
-  image("../figures/archi1.png", width: 80%),
+  image("../figures/archi1.svg", width: 80%),
   caption: [Maquette du réseau.]
 )
 
@@ -196,57 +196,34 @@ bridge       10
 ```
 === Explication des Commandes
 
-- ```bash
-net add hostname sw1
-```
+- #raw("net add hostname sw1")
   - Définit le nom d'hôte du switch.
 
-- ```bash
-net add bridge bridge ports swp1,swp2,swp3,swp4
-```
+- #raw("net add bridge bridge ports swp1,swp2,swp3,swp4")
   - Ajoute les interfaces physiques (`swp1` à `swp4`) au bridge principal.
 
-- ```bash
-net add bridge bridge vlan-aware
-```
+- #raw("net add bridge bridge vlan-aware")
   - Active le mode "VLAN-aware" du bridge pour permettre la gestion des VLANs.
 
-- ```bash
-net add interface swp2 bridge access 10
-```  ```bash
-net add interface swp3,swp4 bridge access 20
-```
+- #raw("net add interface swp2 bridge access 10") \ #raw("net add interface swp3,swp4 bridge access 20")
   - Configure les interfaces en mode accès:
     - `swp2` appartient au VLAN 10.
     - `swp3` et `swp4` appartiennent au VLAN 20.
 
-- ```bash
-net add interface swp1 bridge trunk vlans 10,20
-```
+- #raw("net add interface swp1 bridge trunk vlans 10,20")
   - Configure `swp1` en mode trunk pour transporter les VLANs 10 et 20.
 
-- ```bash
-net add vlan 10 ip address 192.168.10.1/24
-```  ```bash
-net add vlan 20 ip address 192.168.20.1/24
-```  ```bash
-net add vlan 30 ip address 192.168.30.1/24
-```
+- #raw("net add vlan 10 ip address 192.168.10.1/24") \ #raw("net add vlan 20 ip address 192.168.20.1/24") \ #raw("net add vlan 30 ip address 192.168.30.1/24")
   - Crée les interfaces VLAN et assigne les adresses IP de gestion:
     - VLAN 10: `192.168.10.0/24`
     - VLAN 20: `192.168.20.0/24`
     - VLAN 30: `192.168.30.0/24`
 
-- ```bash
-net commit
-```
-  - Valide et applique toutes les modifications précédentes, analogue à un commit sur Git.
-
-== Configuration des Adresses IP sur les Machines
+- #raw("net commit")
+  - Valide et applique toutes les modifications précédentes, analogue à un commit sur Git.== Configuration des Adresses IP sur les Machines
+  \
 === Machine 1
-Dans le fichier ```bash
-/etc/network/interfaces :
-```  
+Dans le fichier #raw("/etc/network/interfaces :")  
 ```bash 
 auto ens36 
 iface ens36 inet static 
@@ -257,6 +234,8 @@ iface ens36 inet static
   image("../figures/1/10-3.png", width: 80%),
   caption: [Configuration IP de la Machine 1.]
 )
+
+\
 
 === Machine 2
 ```bash 
@@ -316,8 +295,11 @@ On peut vérifier l'état du Bond :
 Dans ```bash /etc/cumulus/acl/policy.d/50_custom.rules```
 ```bash  
 [iptables]
--A FORWARD -s 192.168.30.3 -d 192.168.10.3 -j DROP
--A FORWARD tcp -s 192.168.10.3 -d 192.168.30.3 -j DROP
+-A FORWARD -p tcp -s 192.168.30.3 -d 192.168.10.3 -j DROP
+-A FORWARD -p tcp -s 192.168.10.3 -d 192.168.30.3 -j DROP
+
+-A FORWARD -p icmp -s 192.168.30.3 -d 192.168.10.3 -j DROP
+-A FORWARD -p icmp -s 192.168.10.3 -d 192.168.30.3 -j DROP
 ``` 
 ==== Explication des règles de pare-feu
 Ces règles de pare-feu ont pour but de détruire tout paquet entre les deux réseaux afin d'assurer leur isolation.
@@ -329,9 +311,10 @@ On peut tester que les machines ne peuvent pas se pinger :
 )
 On peut voir que la Machine-2 peut communiquer avec le serveur NFS mais pas avec la Machine-1
 
-
+\
 == Configuration du Partage NFS
 === Sur le Serveur NFS
+\
 ```bash 
 apt install nfs-kernel-server
 
