@@ -208,3 +208,143 @@ Command '['/sbin/ifreload', '-a']' returned non-zero exit status 1
 
 
 FIX : SUDO net commit
+
+
+
+====================================================================================================================
+19 mars
+
+switch 1
+```bash
+net add bond peerlink interfaces swp4,swp5
+net add interface peerlink clag peer-ip 169.254.1.2 secondary-ip 192.168.59.161
+
+net add bond bond-m1 interfaces swp1
+net add bond bond-m1 clag id 10
+net add bond bond-m1 bridge access 10
+
+net add interface swp3 bridge trunk allowed 10,20
+
+net pending
+net commit
+```
+
+switch 2
+```bash
+net add bond peerlink interfaces swp4,swp5
+net add interface peerlink clag peer-ip 169.254.1.1 secondary-ip 192.168.59.160
+
+net add bond bond-m1 interfaces swp1
+net add bond bond-m1 clag id 10
+net add bond bond-m1 bridge access 10
+
+net add interface swp3 bridge trunk allowed 10,20
+
+net pending
+net commit
+```
+
+switch 3
+```bash
+net add vlan 10 ip address 192.168.1.254/24
+net add vlan 20 ip address 192.168.2.254/24
+
+net add interface swp1 bridge trunk allowed 10,20
+net add interface swp2 bridge trunk allowed 10,20
+net pending
+net commit
+```
+
+
+Machines 
+```bash 
+sudo nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=802.3ad,miimon=100"
+sudo nmcli con add type ethernet con-name bond0-port1 ifname ens36 master bond0
+sudo nmcli con add type ethernet con-name bond0-port2 ifname ens37 master bond0
+```
+
+
+
+```bash 
+# ==========================================
+# CONFIGURATION DU SWITCH 1 (Accès - MLAG Primaire)
+# ==========================================
+
+# 1. Création des VLANs
+net add vlan 10,20
+
+# 2. Configuration du Peerlink (Lien ISL entre SW1 et SW2)
+net add bond peerlink interfaces swp4,swp5
+net add clag peer sys-mac 44:38:39:ff:00:01
+net add clag peer priority 4096
+net add interface peerlink clag peer-ip link-local
+
+# 3. Configuration de l'agrégation vers la Machine 1 (VLAN 10)
+net add bond bond-m1 interfaces swp1
+net add bond bond-m1 clag id 10
+net add bond bond-m1 bridge access 10
+
+# 4. Configuration de l'agrégation vers la Machine 2 (VLAN 20)
+net add bond bond-m2 interfaces swp2
+net add bond bond-m2 clag id 20
+net add bond bond-m2 bridge access 20
+
+# 5. Configuration du Trunk vers le Switch 3
+net add interface swp3 bridge trunk allowed 10,20
+
+# 6. Application de la configuration
+net pending
+net commit
+
+
+# ==========================================
+# CONFIGURATION DU SWITCH 2 (Accès - MLAG Secondaire)
+# ==========================================
+
+# 1. Création des VLANs
+net add vlan 10,20
+
+# 2. Configuration du Peerlink
+net add bond peerlink interfaces swp4,swp5
+# La MAC doit être EXACTEMENT la même que sur SW1
+net add clag peer sys-mac 44:38:39:ff:00:01 
+net add clag peer priority 8192
+net add interface peerlink clag peer-ip link-local
+
+# 3. Configuration de l'agrégation vers la Machine 1 (VLAN 10)
+# Le clag id doit être le même que sur SW1
+net add bond bond-m1 interfaces swp1
+net add bond bond-m1 clag id 10
+net add bond bond-m1 bridge access 10
+
+# 4. Configuration de l'agrégation vers la Machine 2 (VLAN 20)
+# Le clag id doit être le même que sur SW1
+net add bond bond-m2 interfaces swp2
+net add bond bond-m2 clag id 20
+net add bond bond-m2 bridge access 20
+
+# 5. Configuration du Trunk vers le Switch 3
+net add interface swp3 bridge trunk allowed 10,20
+
+# 6. Application de la configuration
+net pending
+net commit
+
+
+# ==========================================
+# CONFIGURATION DU SWITCH 3 (Distribution/Core - L3)
+# ==========================================
+
+# 1. Création des interfaces de routage (SVI)
+net add vlan 10 ip address 192.168.1.254/24
+net add vlan 20 ip address 192.168.2.254/24
+
+# 2. Configuration des Trunks vers SW1 et SW2
+# STP bloquera automatiquement un des deux liens pour éviter une boucle L2
+net add interface swp1 bridge trunk allowed 10,20
+net add interface swp2 bridge trunk allowed 10,20
+
+# 3. Application de la configuration
+net pending
+net commit
+```

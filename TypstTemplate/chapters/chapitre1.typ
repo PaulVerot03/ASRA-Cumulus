@@ -317,7 +317,7 @@ Dans ```bash /etc/cumulus/acl/policy.d/50_custom.rules```
 ```bash  
 [iptables]
 -A FORWARD -s 192.168.30.3 -d 192.168.10.3 -j DROP
--A FORWARD tcp -s 192.168.10.3 -d 192.168.30.3 -j DROP
+-A FORWARD -s 192.168.10.3 -d 192.168.30.3 -j DROP
 ``` 
 ==== Explication des règles de pare-feu
 Ces règles de pare-feu ont pour but de détruire tout paquet entre les deux réseaux afin d'assurer leur isolation.
