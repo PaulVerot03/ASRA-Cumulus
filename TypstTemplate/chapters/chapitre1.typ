@@ -358,17 +358,17 @@ systemctl restart nfs-kernel-server
 ```
 \ \
 ```bash
-#! Machine-1  
+# Machine-1  
 mkdir /mnt/backup_m1
 mount -t nfs -o vers=4 192.168.20.3:/machine1 /mnt/backup_m1
 ```
 ==== Test du transfert NFS
 On peut ensuite tester que le transfert fonctionne en créant un fichier dans `/mnt/backup_m1` et vérifier qu'il apparaît bien sur le serveur NFS.
 ```bash 
-#! Machine-1 
+# Machine-1 
 touch /mnt/backup_m1/test.ms
 
-#! Serveur NFS 
+# Serveur NFS 
 ls -la /machine1
 ```
 #figure(
@@ -384,7 +384,7 @@ ls -la /machine1
 On peut aussi vérifier que l'on ne peut pas monter le partage (share) si l'on ne fait pas partie du réseau désigné :
 \
 ```bash
-#! Machine-2 
+# Machine-2 
 mkdir /mnt/backup_m2
 mount -t nfs -o vers=4 192.168.20.3:/machine1 /mnt/backup_m2
 ```
