@@ -13,7 +13,7 @@
   body
 }
 
-
+#show heading : smallcaps
 #show: init-glossary.with(
   (
     PBL: "Problem Based Learning",

@@ -3,6 +3,8 @@
   set text(fill: rgb("#003b69") )
   body
 }
+#show heading : smallcaps
+
 = Partage Réseau NFS
 #figure(
   image("../figures/archi1.png", width: 80%),
