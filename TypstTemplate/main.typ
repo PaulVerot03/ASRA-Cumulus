@@ -12,7 +12,6 @@
   set text(fill: rgb("#003b69") )
   body
 }
-
 #show heading : smallcaps
 #show: init-glossary.with(
   (
@@ -63,3 +62,5 @@
 #include("chapters/chapitre3.typ")
 #include("chapters/chapitre4.typ")
 
+#show: appendix
+#include "appendices/appendix.typ"

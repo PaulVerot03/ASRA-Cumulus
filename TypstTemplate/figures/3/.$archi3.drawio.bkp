@@ -1,0 +1,63 @@
+<mxfile host="Electron" modified="2023-10-27T10:00:00.000Z" agent="Mozilla/5.0" version="21.2.8" type="device">
+  <diagram id="network_diagram" name="Architecture MLAG">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="sw3" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Switch 3 (L3 / Distribution)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;b&gt;Mgmt:&lt;/b&gt; DHCP (vrf mgmt)&lt;br&gt;&lt;b&gt;SVI VLAN 10:&lt;/b&gt; 192.168.1.254/24&lt;br&gt;&lt;b&gt;SVI VLAN 20:&lt;/b&gt; 192.168.2.254/24&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sw1" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Switch 1 (Accès / MLAG)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;b&gt;Mgmt eth0:&lt;/b&gt; 192.168.0.11/24&lt;br&gt;&lt;b&gt;CLAG Prio:&lt;/b&gt; 1000 (Primaire)&lt;br&gt;&lt;b&gt;MAC MLAG:&lt;/b&gt; 44:38:39:FF:FF:FF&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="160" y="260" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sw2" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Switch 2 (Accès / MLAG)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;b&gt;Mgmt eth0:&lt;/b&gt; 192.168.0.12/24&lt;br&gt;&lt;b&gt;CLAG Prio:&lt;/b&gt; 2000 (Secondaire)&lt;br&gt;&lt;b&gt;MAC MLAG:&lt;/b&gt; 44:38:39:FF:FF:FF&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="640" y="260" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Machine 1 (VLAN 10)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;b&gt;IP:&lt;/b&gt; 192.168.1.1/24&lt;br&gt;&lt;b&gt;GW:&lt;/b&gt; 192.168.1.254&lt;br&gt;&lt;b&gt;LACP:&lt;/b&gt; bond0 (ens34, ens35)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="160" y="520" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m2" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;Machine 2 (VLAN 20)&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;b&gt;IP:&lt;/b&gt; 192.168.2.1/24&lt;br&gt;&lt;b&gt;GW:&lt;/b&gt; 192.168.2.254&lt;br&gt;&lt;b&gt;LACP:&lt;/b&gt; bond0 (ens34, ens35)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="640" y="520" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="link_sw1_sw3" value="&lt;b&gt;Trunk Standard&lt;/b&gt; (VLAN 10,20)&lt;br&gt;[swp5] &lt;-&gt; [swp1]" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw1" target="sw3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="link_sw2_sw3" value="&lt;b&gt;Trunk Standard&lt;/b&gt; (VLAN 10,20)&lt;br&gt;[swp5] &lt;-&gt; [swp2]&lt;br&gt;&lt;i style=&quot;color:red;&quot;&gt;Bloqué par STP (Prévention boucle)&lt;/i&gt;" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;dashed=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw2" target="sw3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="peerlink" value="&lt;b&gt;Peerlink (Contrôle MLAG)&lt;/b&gt;&lt;br&gt;bond (swp3, swp4)&lt;br&gt;VLAN 4094 (192.168.10.1 &lt;-&gt; .2)" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=4;fillColor=#f8cecc;strokeColor=#b85450;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw1" target="sw2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="link_sw1_m1" value="[swp1] &lt;-&gt; [ens34]&lt;br&gt;bond-m1 (CLAG 1)" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw1" target="m1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="link_sw2_m1" value="[swp1] &lt;-&gt; [ens35]&lt;br&gt;bond-m1 (CLAG 1)" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw2" target="m1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="link_sw1_m2" value="[swp2] &lt;-&gt; [ens34]&lt;br&gt;bond-m2 (CLAG 2)" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw1" target="m2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="link_sw2_m2" value="[swp2] &lt;-&gt; [ens35]&lt;br&gt;bond-m2 (CLAG 2)" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sw2" target="m2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
