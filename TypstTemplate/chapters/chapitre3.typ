@@ -12,9 +12,9 @@
 - Maximiser les performances : utilisation simultanée de tous les liens (actif/actif).
 - Utilisation exclusive de Cumulus Linux ; aucun commutateur supplémentaire ; Machine-1 et Machine-2 ne peuvent pas être connectées directement à Switch-3.
 #strong[Plan :] 
-- Pour garantir la continuité de service en cas de panne d'un commutateur d'accès (Switch 1 ou Switch 2), chaque machine (M1 et M2) sera connectée physiquement et simultanément aux deux switchs via une agrégation de liens utilisant le protocole LACP (mode 802.3ad).
-- Pour maximiser les performances en permettant l'utilisation simultanée de tous les liens (mode actif-actif), une architecture MLAG (Multi-Chassis Link Aggregation) sera déployée entre le Switch 1 et le Switch 2. Cela nécessite la mise en place d'un "Peer Link" entre ces deux commutateurs pour synchroniser leurs états et agir comme un seul commutateur logique vis-à-vis des machines.
-- Pour assurer la redondance vers la couche supérieure, une agrégation de liens sera également configurée entre notre nouveau cluster MLAG (Switch 1 et 2) et le routeur de distribution (Switch 3).
+- Pour garantir la continuité de service en cas de panne d'un commutateur d'accès (Switch-1 ou Switch-2), chaque machine (Machine-1 et Machine-2) sera connectée physiquement et simultanément aux deux switchs via une agrégation de liens utilisant le protocole LACP (mode 802.3ad).
+- Pour maximiser les performances en permettant l'utilisation simultanée de tous les liens (mode actif-actif), une architecture MLAG (Multi-Chassis Link Aggregation) sera déployée entre le Switch-1 et le Switch-2. Cela nécessite la mise en place d'un "Peer Link" entre ces deux commutateurs pour synchroniser leurs états et agir comme un seul commutateur logique vis-à-vis des machines.
+- Pour assurer la redondance vers la couche supérieure, une agrégation de liens sera également configurée entre notre nouveau cluster MLAG (Switch-1 et 2) et le routeur de distribution (Switch-3).
 - Ajouter des liens M1#sym.arrow.l.r.double S2 et M1#sym.arrow.l.r.double S1
 - Ajouter un _PeerLink_  Switch-1 #sym.arrow.l.r.double Switch-2
 - Agrégation de liens entre les Switch {1,2} #sym.arrow.l.r.double Switch-3

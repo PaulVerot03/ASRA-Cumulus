@@ -251,7 +251,7 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 === Coupure dans la couche Access 
 Pour tester le réseau, on va lancer un ping M1 $<=>$ M2 puis éteindre le Switch-1.
 #figure(
-  image("../figures/4/image1.png", width: 70%),
+  image("../figures/4/image4.png", width: 70%),
   caption: "Ping de M1 à M2"
 )
 Comme on peut le voir, la coupure du switch 1 entraine un délai (#sym.tilde.rev 7ms) à la requete N°53.
@@ -268,7 +268,7 @@ Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et r
  l'interface bond-down de Switch-4.
 
 #figure(
-  image("../figures/4/image4.png", width: 70%),
+  image("../figures/4/image1.png", width: 70%),
   caption: "Ping de M1 à M2"
 )
 #figure(
