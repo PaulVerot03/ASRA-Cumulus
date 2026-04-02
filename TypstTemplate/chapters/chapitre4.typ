@@ -5,7 +5,11 @@
 Pour répondre au besoin de tolérance de panne sur la couche distribution (niveau 3) tout en maintenant la redondance de la couche accès (niveau 2), nous avons ajouté un quatrième switch (Switch-4) pour servir de secour au Switch-3.
 
 \
-#strong[Plan :] Pour palier la perte du routeur (Switch-3) , nous avons implémenté VRR (Virtual Router Redundancy), propre à Cumulus Linux, sur Switch-3 et Switch-4. Les deux commutateurs partagent les mêmes adresses IP et MAC virtuelles (192.168.1.254 et 192.168.2.254 avec la MAC 00:00:5E:00:01:10 / 00:00:5E:00:01:20). \ \ Contrairement à VRRP traditionnel, VRR permet une configuration "Active-Active" et ne nécessite pas de délai de bascule ni d'élection de maître : si SW3 tombe, SW4 route instantanément les paquets car il répond déjà aux mêmes requêtes ARP.
+#strong[Plan :] 
+- Pour pallier la perte du routeur principal (Switch 3) au niveau de la couche distribution, un quatrième commutateur (Switch 4) sera ajouté à l'architecture pour servir de solution de secours (failover) tout en conservant la redondance de la couche accès.
+- Pour assurer une reprise instantanée du trafic sans nécessiter de délai de bascule ni d'élection de maître, le protocole VRR (Virtual Router Redundancy), spécifique à Cumulus Linux, sera implémenté sur le Switch 3 et le Switch 4.
+- Pour permettre un routage "Active-Active", la configuration VRR fera en sorte que les Switchs 3 et 4 partagent les mêmes adresses IP et adresses MAC virtuelles (192.168.1.254 et 192.168.2.254 avec les MAC 00:00:5E:00:01:10 / 00:00:5E:00:01:20). Ainsi, si le Switch 3 tombe, le Switch 4 routera les paquets instantanément car il répondra déjà aux mêmes requêtes ARP.
+- Pour lier ce nouveau routeur de secours à l'infrastructure existante, de nouvelles agrégations de liens (Trunk de secours en mode 802.3ad) seront configurées pour relier les Switchs 1 et 2 vers le Switch 4.
 
 == Mise en Place
 === Sur VMware
