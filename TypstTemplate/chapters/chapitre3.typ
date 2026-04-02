@@ -6,16 +6,15 @@
 }
 
 = Tolérance de panne, couche "access"
-
 == Résumé des contraintes et des demandes
-- Assurer la tolérance aux pannes des commutateurs de la couche access (Switch 1 et Switch 2).
-- En cas de défaillance de l'un des deux, le trafic entre Machine 1 et Machine 2 ne doit subir aucune interruption.
+- Assurer la tolérance aux pannes des commutateurs de la couche access (Switch-1 et Switch-2).
+- En cas de défaillance de l'un des deux, le trafic entre Machine-1 et Machine-2 ne doit subir aucune interruption.
 - Maximiser les performances : utilisation simultanée de tous les liens (actif/actif).
-- Utilisation exclusive de Cumulus Linux ; aucun commutateur supplémentaire ; Machine 1 et Machine 2 ne peuvent pas être connectées directement à Switch 3.
+- Utilisation exclusive de Cumulus Linux ; aucun commutateur supplémentaire ; Machine-1 et Machine-2 ne peuvent pas être connectées directement à Switch-3.
 #strong[Plan :] 
 - Ajouter des liens M1#sym.arrow.l.r.double S2 et M1#sym.arrow.l.r.double S1
-- Ajouter un _PeerLink_  Switch 1 #sym.arrow.l.r.double Switch 2
-- Agrégation de liens entre les Switch {1,2} #sym.arrow.l.r.double Switch 3
+- Ajouter un _PeerLink_  Switch-1 #sym.arrow.l.r.double Switch-2
+- Agrégation de liens entre les Switch {1,2} #sym.arrow.l.r.double Switch-3
 
 == Mise en place 
 === Sur VMware
@@ -23,19 +22,21 @@
 #grid(
   columns: 2,
   list(
-    [Machine 1 : connectée à LAN1 (vers SW1) et LAN2 (vers SW2)],
-    [Machine 2 : connectée à LAN3 (vers SW1) et LAN4 (vers SW2)]
+    [Machine-1 : connectée à LAN1 (vers SW1) et LAN2 (vers SW2)],
+    [Machine-2 : connectée à LAN3 (vers SW1) et LAN4 (vers SW2)]
   ),
   list(
-    [Switch 1 : connecté à LAN1, LAN3, LAN5, LAN6, LAN7],
-    [Switch 2 : connecté à LAN2, LAN4, LAN5, LAN6, LAN8],
-    [Switch 3 : connecté à LAN7, LAN8]
+    [Switch-1 : connecté à LAN1, LAN3, LAN5, LAN6, LAN7],
+    [Switch-2 : connecté à LAN2, LAN4, LAN5, LAN6, LAN8],
+    [Switch-3 : connecté à LAN7, LAN8]
   )
 )
 === Sur les machines
 #strong[Sur les clients :]
-Pour mettre en place l'agrégation de liens entre les machines et les switch, on utilise la configuration suivante :
+Pour mettre en place l'agrégation de liens entre les clients et les switch, on utilise la configuration suivante sur les clients :
+Machine-1
 ```bash
+...
 auto bond0
 iface bond0 inet static
     address 192.168.1.1/24
@@ -45,9 +46,25 @@ iface bond0 inet static
     bond-miimon 100
     bond-lacp-rate 1
 ```
-#sub[NB: l'adresse IP est différente pour la machine 2]
-#strong[Sur les switch :]
-Switch 1:
+
+Machine-2
+
+```sh
+...
+auto bond0
+iface bond0 inet static
+    address 192.168.2.1/24
+    gateway 192.168.2.254
+    bond-slaves ens36 ens37
+    bond-mode 802.3ad
+    bond-miimon 100
+    bond-lacp-rate 1
+
+```
+#line(stroke:(thickness:0.5pt, dash:"dashed"), length: 100%)
+\
+#underline[Sur les switch :] \
+Switch-1:
 ```bash
 auto swp1
 iface swp1
@@ -60,9 +77,6 @@ iface swp4
 auto swp5
 iface swp5
 
-
-# --- CONFIGURATION MLAG ---
-# Peer Link (swp3 + swp4 en 802.3ad)
 auto peerlink
 iface peerlink
     bond-slaves swp3 swp4
@@ -102,8 +116,8 @@ iface bridge
 
 ```
 \
-Switch 2 :
-Seules les différences avec la configuration du switch 1 sont montrées. 
+#underline[Switch-2] :
+Seules les différences avec la configuration du Switch-1 sont montrées. 
 ```bash
 ...
 auto peerlink.4094
@@ -116,7 +130,7 @@ iface peerlink.4094
 ...
 ```
 \
-Switch 3:
+#underline[Switch-3]:
 ```bash
 auto lo
 iface lo inet loopback
@@ -159,7 +173,7 @@ iface vlan20
 \
 On peut vérifier l'état du bond avec `net show clag`.
 
-Switch 1:
+#underline[Switch-1]:
 ```bash
 cumulus@sw1:~$ net show clag
 The peer is alive
@@ -177,15 +191,15 @@ bond-m1          bond-m1          1        -          -
 bond-m2          bond-m2          2        -          -
 bond-up          bond-up          3        -          -
 ```
-The peer is alive : le Peer Link entre SW1 et SW2 est fonctionnel.
+#blue[The peer is alive] : le Peer Link entre Switch-1 et Switch2 est fonctionnel.
 
-SW1 est bien primaire (priorité 1000), SW2 secondaire (priorité 2000).
+Switch-1 est bien primaire (priorité 1000), Switch-2 secondaire (priorité 2000).
 
 Les trois agrégats (bond-m1, bond-m2, bond-up) sont synchronisés sans conflit (colonne Conflicts vide).
 
-Backup IP active : le canal de contrôle alternatif via le réseau de management est joignable.
+#blue[Backup IP active] : le canal de contrôle alternatif via le réseau de management est joignable.
 
-Switch 2:
+#underline[Switch-2]:
 ```bash
 cumulus@sw2:~$ net show clag
 The peer is alive
@@ -204,7 +218,7 @@ bond-m2          bond-m2          2        -          -
 bond-up          bond-up          3        -          -
 ```
 
-On peut vérifier l'état du bond sur les machines avec `cat /proc/net/bondinf/bond0`.
+On peut vérifier l'état du bond sur les clients avec `cat /proc/net/bondinf/bond0`.
 ```bash
 Bonding Mode: IEEE 802.3ad Dynamic link aggregation
 Transmit Hash Policy: layer2 (0)
@@ -225,7 +239,7 @@ MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
 Slave Interface: ens37
 MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
 ```
-Identique sur la machine 2.
+Identique sur la Machine-2.
 
 On peut vérifier que les machines peuvent se ping : 
 ```bash 
@@ -244,7 +258,7 @@ En faisant une capture de trame avant de couper un switch, on peut oberver les c
   caption: [communication normale entre les switch avant coupure]
 )
 
-On lance un ping M1 #sym.arrow.l.r.double M2, puis on éteint le Switch 1.
+On lance un ping Machine-1 #sym.arrow.l.r.double Machine-2, puis on éteint le Switch-1.
 
 ```bash
 --- 192.168.2.1 ping statistics ---
@@ -253,4 +267,4 @@ rtt min/avg/max/mdev = 2.315/3.127/5.782/0.614 ms
 ```
 \
 
-Seulement 2 paquets perdus sur 99 lors de la coupure de Switch 1. Les 2 pertes correspondent au délai minimal de détection MII (bond-miimon 100 ms) et de basculement des flux du bond0 des machines vers le seul lien restant (ens37 vers SW2).
+Seulement 2 paquets perdus sur 99 lors de la coupure de Switch-1. Les 2 pertes correspondent au délai minimal de détection MII (bond-miimon 100 ms) et de basculement des flux du bond0 des machines vers le seul lien restant (ens37 vers Switch-2).

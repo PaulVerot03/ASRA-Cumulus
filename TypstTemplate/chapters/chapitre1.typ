@@ -115,7 +115,7 @@ swp4         20  PVID, Egress Untagged
 ```
 \
 \
-#line(length: 100%, stroke:(thickness:1pt, dash:"dashed"))
+#line(length: 100%, stroke:(thickness:0.5pt, dash:"dashed"))
 \
 #underline[Switch 2]
 \
@@ -154,7 +154,7 @@ swp2         30  PVID, Egress Untagged
 ```
 \
 \
-#line(length: 100%, stroke:(thickness:1pt, dash:"dashed"))
+#line(length: 100%, stroke:(thickness:0.5pt, dash:"dashed"))
 \
 #underline[Switch 3] 
 \

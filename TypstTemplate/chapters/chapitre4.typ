@@ -2,9 +2,10 @@
 
 = Redondance de Routeurs
 == Architecture
-Pour répondre au besoin de tolérance de panne sur la couche distribution (niveau 3) tout en maintenant la redondance de la couche accès (niveau 2), nous avons ajouté un quatrième commutateur (Switch 4) pour servir de failover au Switch 3.
+Pour répondre au besoin de tolérance de panne sur la couche distribution (niveau 3) tout en maintenant la redondance de la couche accès (niveau 2), nous avons ajouté un quatrième switch (Switch-4) pour servir de secour au Switch-3.
 
-#strong[Plan :] Pour palier la perte du routeur (Switch 3) , nous avons implémenté VRR (Virtual Router Redundancy), propre à Cumulus Linux, sur SW3 et SW4. Les deux commutateurs partagent les mêmes adresses IP et MAC virtuelles (192.168.1.254 et 192.168.2.254 avec la MAC 00:00:5E:00:01:10 / 00:00:5E:00:01:20). Contrairement à VRRP traditionnel, VRR permet une configuration "Active-Active" et ne nécessite pas de délai de bascule ni d'élection de maître : si SW3 tombe, SW4 route instantanément les paquets car il répond déjà aux mêmes requêtes ARP.
+\
+#strong[Plan :] Pour palier la perte du routeur (Switch-3) , nous avons implémenté VRR (Virtual Router Redundancy), propre à Cumulus Linux, sur Switch-3 et Switch-4. Les deux commutateurs partagent les mêmes adresses IP et MAC virtuelles (192.168.1.254 et 192.168.2.254 avec la MAC 00:00:5E:00:01:10 / 00:00:5E:00:01:20). \ \ Contrairement à VRRP traditionnel, VRR permet une configuration "Active-Active" et ne nécessite pas de délai de bascule ni d'élection de maître : si SW3 tombe, SW4 route instantanément les paquets car il répond déjà aux mêmes requêtes ARP.
 
 == Mise en Place
 === Sur VMware
@@ -12,8 +13,8 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 #grid(
   columns: 2,
   list(
-    [Machine 1 : LAN1 (vers SW1) et LAN2 (vers SW2)],
-    [Machine 2 : LAN3 (vers SW1) et LAN4 (vers SW2)]
+    [Machine-1 : LAN1 (vers SW1) et LAN2 (vers SW2)],
+    [Machine-2 : LAN3 (vers SW1) et LAN4 (vers SW2)]
   ),
   list(
     [Switch 1 : LAN1, LAN3, LAN5, LAN6, LAN7],
@@ -21,13 +22,14 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
     [Switch 3 : LAN7, LAN8]
   )  // Ajouter le switch 4
 )
+
 === Sur les Machines
 #strong("Sur les Client")
 #grid(
   columns: (1fr,1fr),
   gutter: 5pt,
-  raw(("
-  # Machine 1
+  ```bash
+  # Machine-1
   auto ens36
   iface ens36 inet manual
   auto ens37
@@ -40,9 +42,9 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
   bond-slaves ens36 ens37
   bond-mode 802.3ad
   bond-miimon 100
-  bond-lacp-rate 1"), lang:"bash"),
-  raw(("
-  #Machine 2
+  bond-lacp-rate 1```,
+  ```bash
+  #Machine-2
   auto ens36
   iface ens36 inet manual
   auto ens37
@@ -55,7 +57,7 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
   bond-slaves ens36 ens37
   bond-mode 802.3ad
   bond-miimon 100
-  bond-lacp-rate 1"),lang:"bash")
+  bond-lacp-rate 1```
 )
 #strong("Sur les Switch :")
 #grid(
@@ -247,7 +249,7 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 
 == Tests
 === Coupure dans la couche Access 
-Pour tester le réseau, on va lancer un ping M1 M2 puis éteindre le Switch 1.
+Pour tester le réseau, on va lancer un ping M1 $<=>$ M2 puis éteindre le Switch-1.
 #figure(
   image("../figures/4/image1.png", width: 70%),
   caption: "Ping de M1 à M2"
@@ -262,8 +264,8 @@ Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et r
 
 === Coupure dans la couche Disribution
 
- En coupant le Switch 3, le Switch 4 prend immédiatement le relais. Grâce au protocole VRR, SW4 partage la même passerelle (IP et adresse MAC virtuelle) que SW3. Par conséquent, les caches ARP des hôtes n'ont pas besoin d'expirer ou de se mettre à jour ; le trafic est instantanément traité par
- l'interface bond-down de SW4.
+ En coupant le Switch-3, le Switch-4 prend immédiatement le relais. Grâce au protocole VRR, Switch-4 partage la même passerelle (IP et adresse MAC virtuelle) que Switch-3. Par conséquent, les caches ARP des hôtes n'ont pas besoin d'expirer ou de se mettre à jour ; le trafic est instantanément traité par
+ l'interface bond-down de Switch-4.
 
 #figure(
   image("../figures/4/image4.png", width: 70%),
@@ -277,4 +279,4 @@ Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et r
   caption: "tcpdump sur un des clients"
 )
 
-L'analyse de la trace réseau montre bien les requêtes ICMP qui s'enchaînent , et on voit également les requêtes ARP Request _who-has 192.168.1.1_ traitées par les équipements sans interruption fatale du flux. La redondance du routeur est donc fonctionnelle et valide nos choix d'architecture.
+L'analyse de la trace réseau montre bien les requêtes ICMP qui s'enchaînent , et on voit également les requêtes ARP Request _who-has 192.168.1.1_ traitées par les équipements sans interruption fatale du flux. La redondance du routeur est donc fonctionnelle.
