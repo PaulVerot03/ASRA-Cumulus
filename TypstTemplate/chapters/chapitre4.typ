@@ -249,7 +249,9 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
     vlan-id 20
     vlan-raw-device bridge
     address 192.168.2.253/24
-    address-virtual 00:00:5E:00:01:20 192.168.2.254/24"),lang: "sh"))
+    address-virtual 00:00:5E:00:01:20 192.168.2.254/24"),lang: "sh")) 
+
+- address-virtual : Cette directive assigne l'adresse MAC virtuelle (ex: 00:00:5E:00:01:10) et l'IP de la passerelle partagée (ex: 192.168.1.254/24) à l'interface VLAN. C'est elle qui permet le fonctionnement Actif-Actif sans nécessiter de protocole complexe comme VRRP.
 
 == Tests
 === Coupure dans la couche Access 
