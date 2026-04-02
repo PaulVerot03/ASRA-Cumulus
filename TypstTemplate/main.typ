@@ -13,22 +13,6 @@
   body
 }
 #show heading : smallcaps
-#show: init-glossary.with(
-  (
-    PBL: "Problem Based Learning",
-    web: (
-      short: "WWW",
-      long: "World Wide Web",
-    ),
-    LTS: (
-      short: "LTS",
-      long: "Labelled Transition System",
-      plural: "LTSs", 
-    ),
-  ),
-  term-links: true,
-) 
-
 
 #show: project.with(
   meta: (
@@ -50,7 +34,7 @@
 
   fr: (
     title: "Projet d'Administration des Systèmes et des Réseaux II",
-    theme: "Architecture de réseaux et commutation",
+    theme: "Architecture de réseaux avec Cumulus et Debian",
     abstract: "",
   ),
 
