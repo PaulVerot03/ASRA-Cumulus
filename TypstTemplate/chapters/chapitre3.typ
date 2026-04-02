@@ -172,6 +172,12 @@ iface vlan20
     vlan-raw-device bridge
     address 192.168.2.254/24
 ```
+- clagd-peer-ip : Définit l'adresse IP du switch partenaire pour établir le canal de contrôle MLAG via le Peer Link.
+- clagd-sys-mac : Adresse MAC système partagée par les deux commutateurs. C'est essentiel pour qu'ils apparaissent comme une seule et même entité logique (un seul switch) vis-à-vis des autres équipements (comme M1, M2 ou SW3).
+- clagd-priority : Détermine le rôle du switch dans le cluster MLAG. Le switch avec la priorité la plus basse (ex: 1000 pour SW1 ) devient le "Primary", et l'autre (ex: 2000 pour SW2 ) devient le "Secondary".
+- clagd-backup-ip : Définit une adresse IP de secours (généralement via le réseau de management Out-Of-Band). Si le Peer Link physique tombe, cette IP permet de vérifier si le switch partenaire est totalement en panne ou si c'est juste le lien qui est coupé, évitant ainsi le problème du "split-brain" (où les deux switchs penseraient être le maître).
+- clag-id : Identifiant unique assigné à une interface agrégée (bond). Il doit être strictement identique sur les deux switchs pour qu'ils synchronisent correctement le même lien LACP vers un équipement tiers.
+
 \
 \
 On peut vérifier l'état du bond avec `net show clag`.
