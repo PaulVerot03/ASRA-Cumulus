@@ -17,9 +17,9 @@
 - La solution doit permettre une reprise du trafic la plus rapide possible en cas de coupure d'un lien.
 
 #strong[Plan :]
-- Nous allons configurer les connexions physiques et logiques (ponts) sur les trois  switch pour lier les machines.
-- Afin d'éviter les tempêtes de diffusion (boucles L2) causées par la topologie en anneau, nous allons forcer l'utilisation du protocole STP (Spanning Tree Protocol) standard, analyser les rôles des ports, puis simuler une panne de lien pour observer le temps de convergence.
-- Ensuite, nous passerons sur le protocole RSTP (Rapid Spanning Tree Protocol) pour comparer les performances de basculement et répondre à l'exigence de reprise rapide du trafic.
+- Pour éviter les tempêtes de diffusion (broadcast storms) inhérentes à notre topologie physique en anneau , nous allons forcer l'utilisation du protocole STP (Spanning Tree Protocol) standard sur les trois commutateurs. Il bloquera logiquement l'un des chemins redondants pour briser la boucle L2 tout en le gardant en secours.
+- Pour évaluer la résilience de cette première configuration, nous simulerons une panne en coupant le lien actif. L'objectif sera d'observer le délai de bascule d'environ 30 secondes, causé par les états intermédiaires temporisés (Listening et Learning) imposés par les timers par défaut du STP classique.
+- Pour répondre à la contrainte d'une reprise du trafic la plus rapide possible, nous ferons ensuite évoluer la configuration pour utiliser le protocole RSTP (Rapid Spanning Tree Protocol, 802.1w). Grâce à son mécanisme de négociation active entre les switchs, le port de secours passera immédiatement à l'état Forwarding en cas de nouvelle coupure, assurant ainsi une continuité de service quasi parfaite.
 
 == Problème de la topologie initiale
 Afin d'illustrer la criticité d'une topologie physique en anneau non gérée, nous avons désactivé la prévention de boucles sur nos switch (en ajoutant la ligne `bridge-stp off` dans  ```bash /etc/network/interfaces ```).\
