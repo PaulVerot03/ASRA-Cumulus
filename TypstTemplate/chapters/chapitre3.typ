@@ -251,4 +251,6 @@ On lance un ping M1 #sym.arrow.l.r.double M2, puis on éteint le Switch 1.
 99 packets transmitted, 97 received, 2.0202% packet loss, time 98255ms
 rtt min/avg/max/mdev = 2.315/3.127/5.782/0.614 ms
 ```
+\
+
 Seulement 2 paquets perdus sur 99 lors de la coupure de Switch 1. Les 2 pertes correspondent au délai minimal de détection MII (bond-miimon 100 ms) et de basculement des flux du bond0 des machines vers le seul lien restant (ens37 vers SW2).

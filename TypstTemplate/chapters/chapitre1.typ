@@ -28,10 +28,10 @@
 - Pour assurer l'isolation des machines, elles seront placées dans des VLANs différents et la communication entre ces réseaux sera interdite par des règles de pare-feu sur le Switch-3, qui agirera comme RPD pour les deux machines. On peut également placer des règles pourrestreindre les types de communications entre les machines et le serveur NFS (couper SSH, http, https, ...).
 - Pour garantir la disponibilité des liens sur le serveur NFS, deux interfaces seront configurées en LACP mode #blue[actif-backup] et connectées au Switch-1. En cas de défaillance du lien actif, le second lien prendra le relais.
 - Pour le serveur NFS, `nfs-kernel-server` devra être configuré pour créer des partages réseau et définir les modalités de montage pour les clients.
-
+- Pour isoler les machines on utilisera des VLAN et des règles de pare-feu sur le Swicth 3
 
 == Mise en Place
-On a donc besoin de mettre en place 3 VLANs, un pare-feu, une agrégation de liens et un serveur NFS.
+On a besoin de mettre en place 3 VLANs, un pare-feu, une agrégation de liens et un serveur NFS.
 
 === Sur VMware
 ```txt
@@ -63,8 +63,8 @@ SW3
 \
 Toutes les machines hors switch sont des VM Debian 13 n'ayant pas de Display Manager installé. Chacune avec 2 coeurs et 677 MiB de RAM.
 #figure(
-  image("../figures/fetch.png", width: 50%),
-  caption: [```bash screenfetch```]
+  image("../figures/fetch.png", width: 70%),
+  caption: [Affichage des spécifications avec screenfetch]
 )
 
 \ 
@@ -73,6 +73,8 @@ Toutes les machines hors switch sont des VM Debian 13 n'ayant pas de Display Man
 
 Configuration des VLAN : \
 #underline[Switch 1]
+\
+\
 ```bash
 net add hostname sw1
 net add bridge bridge ports swp1,swp2,swp3,swp4
@@ -111,9 +113,13 @@ swp2         10  PVID, Egress Untagged
 swp3         20  PVID, Egress Untagged
 swp4         20  PVID, Egress Untagged
 ```
-
+\
+\
+#line(length: 100%, stroke:(thickness:1pt, dash:"dashed"))
 \
 #underline[Switch 2]
+\
+\
 ```bash 
 net add hostname sw2
 net add bridge bridge ports swp1,swp2
@@ -146,10 +152,13 @@ swp1          1  PVID, Egress Untagged
              30
 swp2         30  PVID, Egress Untagged
 ```
-
+\
+\
+#line(length: 100%, stroke:(thickness:1pt, dash:"dashed"))
 \
 #underline[Switch 3] 
-
+\
+\
 ```bash 
 net add hostname sw3
 
@@ -164,7 +173,8 @@ net add vlan 20 ip address 192.168.20.1/24
 net add vlan 30 ip address 192.168.30.1/24
 net commit
 ```
-
+\
+\
 ```bash
 cumulus@sw3:mgmt:~$ net show interface 
 State  Name    Spd  MTU    Mode          LLDP        Summary
@@ -245,7 +255,8 @@ net commit
   - Valide et applique toutes les modifications précédentes, analogue à un commit sur Git.
 
 == Configuration des Adresses IP sur les Machines
-=== Machine 1
+=== Clients
+#underline[Machine 1]\
 Dans le fichier ```bash
 /etc/network/interfaces :
 ```  
@@ -260,7 +271,8 @@ iface ens36 inet static
   caption: [Configuration IP de la Machine 1.]
 )
 
-=== Machine 2
+#underline[Machine 2]
+
 ```bash 
 auto ens36 
 iface ens36 inet static 
@@ -322,14 +334,14 @@ Dans ```bash /etc/cumulus/acl/policy.d/50_custom.rules```
 -A FORWARD -s 192.168.10.3 -d 192.168.30.3 -j DROP
 ``` 
 ==== Explication des règles de pare-feu
-Ces règles de pare-feu ont pour but de détruire tout paquet entre les deux réseaux afin d'assurer leur isolation.
+Ces règles ont pour but de détruire tout les paquets entre les réseaux .10.0/24 et .30.0/24 ; ainsi, les deux machines clients ne pourront pas communiquer entre elles.
 
 On peut tester que les machines ne peuvent pas se pinger :
 #figure(
   image("../figures/1/noping.png", width: 80%),
   caption: [Test de communication entre les machines.]
 )
-On peut voir que la Machine-2 peut communiquer avec le serveur NFS mais pas avec la Machine-1
+On peut voir que la Machine-2 peut communiquer avec le serveur NFS (.20.0/24) mais pas avec la Machine-1
 
 
 == Configuration du Partage NFS

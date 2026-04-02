@@ -29,6 +29,7 @@
   term-links: true,
 ) 
 
+
 #show: project.with(
   meta: (
     project-group: "Master I CNS-SR",

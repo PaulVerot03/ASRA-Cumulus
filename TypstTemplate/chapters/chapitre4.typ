@@ -255,9 +255,26 @@ Pour tester le réseau, on va lancer un ping M1 M2 puis éteindre le Switch 1.
 Comme on peut le voir, la coupure du switch 1 entraine un délai (#sym.tilde.rev 7ms) à la requete N°53.
 
 #figure(
-  image("../figures/4/image2.png", width: 70%),
+  image("../figures/4/image3.png", width: 70%),
   caption: "tcpdump sur un des clients"
 )
 Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et routées correctement à travers l'infrastructure restante.
 
-=== COupure dans la couche Disribution
+=== Coupure dans la couche Disribution
+
+ En coupant le Switch 3, le Switch 4 prend immédiatement le relais. Grâce au protocole VRR, SW4 partage la même passerelle (IP et adresse MAC virtuelle) que SW3. Par conséquent, les caches ARP des hôtes n'ont pas besoin d'expirer ou de se mettre à jour ; le trafic est instantanément traité par
+ l'interface bond-down de SW4.
+
+#figure(
+  image("../figures/4/image4.png", width: 70%),
+  caption: "Ping de M1 à M2"
+)
+#figure(
+  grid(
+  image("../figures/4/image2.png", width: 70%),
+  image("../figures/4/image5.png", width: 70%)
+  ),
+  caption: "tcpdump sur un des clients"
+)
+
+L'analyse de la trace réseau montre bien les requêtes ICMP qui s'enchaînent , et on voit également les requêtes ARP Request _who-has 192.168.1.1_ traitées par les équipements sans interruption fatale du flux. La redondance du routeur est donc fonctionnelle et valide nos choix d'architecture.

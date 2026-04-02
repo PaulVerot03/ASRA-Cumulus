@@ -6,8 +6,10 @@
   body
 }
 = Redondance de liens
-== Problème de la topologie initiale
-
+#figure(
+  image("../figures/2/schema-Partie_2_-_STP_RSTP.png", width: 80%),
+  caption: "Schéma du Réseau"
+)
 == Résumé des contraintes et des demandes
 - Les trois  switch (Switch 1, 2 et 3) n'utilisent que des fonctions de niveau 2.
 - Il est impératif de mettre en place un réseau redondant entre les trois  switch tout en garantissant l'absence de boucle L2.
@@ -78,7 +80,7 @@ On peut voir l'état du protocole avec la commande ```bash net show bridge spann
   figure(image("../figures/2/image8.png", width: 100%), caption: "Swicth 1"),
   figure(image("../figures/2/image6.png", width: 100%), caption: "Swicth 2"),
   figure(image("../figures/2/image12.png", width: 100%), caption: "Swicth 3"),
-),
+)
 
 \
 #list(
@@ -112,7 +114,8 @@ Un ping est lancé sur une des machines.
 #strong[Observations :]  Le flux ICMP a été interrompu à la séquence #blue[icmp_seq=10]. Le trafic n'a repris qu'à la séquence #blue[icmp_seq=40]. On observe une perte : #raw("51 packets transmitted, 22 received, 56.8627% packet loss, time 50748ms", lang: "bash") \
 
 Le lien passif à bien prit le relais mais avec un délais qui a permit une perte de paquets.\
-#strong[Explication :] Avec le protocole STP classique (802.1D), lorsqu'un lien tombe, le réseau doit recalculer la topologie. Le port bloqué (swp3) doit passer par plusieurs états intermédiaires temporisés (Listening et Learning) avant de passer en Forwarding. Les timers par défaut (max age 20, forward delay 15 ) imposent un délai de convergence, ce qui explique les ~30 requêtes ICMP perdues (de la séquence 11 à 39) avant la reprise de la connectivité.
+\
+#strong[Explication :] Avec le protocole STP classique (802.1D), lorsqu'un lien tombe, le réseau doit recalculer la topologie. Le port bloqué (swp3) doit passer par plusieurs états intermédiaires temporisés (Listening et Learning) avant de passer en Forwarding. Les timers par défaut (max age 20, forward delay 15 ) imposent un délai de convergence, ce qui explique les 30 requêtes ICMP perdues (de la séquence 11 à 39) avant la reprise de la connectivité.
 \
 En théorie, le délai est $ 2 * "forward delay" = 2 * 15s = 30s $ (15s en _Listening_, puis 15s en _Learning_), ce qui coïncide avec les 30 paquets ICMP perdu, qui sont envoyés à une fréquence de (1 paquet)s#super[-1].
 
