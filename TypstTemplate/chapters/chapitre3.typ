@@ -74,11 +74,11 @@ Machine-2
       bond-mode 802.3ad
       bond-miimon 100
       bond-lacp-rate 1
-
   ```,
 )
 #line(stroke: (thickness: 0.5pt, dash: "dashed"), length: 100%)
 \
+#pagebreak()
 #underline[Sur les switch :] \
 Switch-1:
 #grid(
@@ -134,16 +134,45 @@ Switch-1:
       bridge-vids 10 20
   ```,
 )
+#figure(
+  grid(
+    gutter: 5pt,
+    image("../figures/3/image7.png", width: 80%),
+    image("../figures/3/image1.png", width: 80%),
+  ),
+  caption: "Configuration sur le Switch-1",
+)
+
 \
+#pagebreak()
 #underline[Switch-2] :
-Seules les différences avec la configuration du Switch-1 sont montrées.
 #grid(
   inset: 8pt,
   gutter: 3pt,
   fill: rgb("e4e4ea"),
 
   ```bash
-  ...
+  auto swp1
+  iface swp1
+
+  auto swp2
+  iface swp2
+
+  auto swp3
+  iface swp3
+
+  auto swp4
+  iface swp4
+
+  auto swp5
+  iface swp5
+
+
+  auto peerlink
+  iface peerlink
+      bond-slaves swp3 swp4
+      bond-mode 802.3ad
+
   auto peerlink.4094
   iface peerlink.4094
       address 192.168.10.2/24
@@ -151,10 +180,44 @@ Seules les différences avec la configuration du Switch-1 sont montrées.
       clagd-sys-mac 44:38:39:FF:FF:FF
       clagd-priority 2000
       clagd-backup-ip 192.168.244.154
-  ...
+
+  auto bond-m1
+  iface bond-m1
+      bond-slaves swp1
+      clag-id 1
+      bridge-access 10
+
+  auto bond-m2
+  iface bond-m2
+      bond-slaves swp2
+      clag-id 2
+      bridge-access 20
+
+  auto bond-up
+  iface bond-up
+      bond-slaves swp5
+      clag-id 3
+
+  auto bridge
+  iface bridge
+      bridge-ports peerlink bond-m1 bond-m2 bond-up
+      bridge-vlan-aware yes
+      bridge-vids 10 20
+
   ```,
 )
+#figure(
+  grid(
+    gutter: 5pt,
+
+    image("../figures/3/image4.png", width: 80%),
+    image("../figures/3/image3.png", width: 80%),
+  ),
+  caption: "Configuration du Switch-2",
+)
+
 \
+#pagebreak()
 #underline[Switch-3]:
 #grid(
   columns: 1,
@@ -211,23 +274,28 @@ Seules les différences avec la configuration du Switch-1 sont montrées.
 On peut vérifier l'état du bond avec `net show clag`.
 
 #underline[Switch-1]:
-```bash
-cumulus@sw1:~$ net show clag
-The peer is alive
-    Our Priority, ID, and Role: 1000 00:0c:29:45:30:fe primary
-   Peer Priority, ID, and Role: 2000 00:0c:29:64:76:96 secondary
-         Peer Interface and IP: peerlink.4094 192.168.10.2
-                    Backup IP: 192.168.244.155 (active)
-                   System MAC: 44:38:39:ff:ff:ff
+#grid(
+  inset: 8pt,
+  gutter: 3pt,
+  fill: rgb("e4e4ea"),
+  ```bash
+  cumulus@sw1:~$ net show clag
+  The peer is alive
+      Our Priority, ID, and Role: 1000 00:0c:29:45:30:fe primary
+     Peer Priority, ID, and Role: 2000 00:0c:29:64:76:96 secondary
+           Peer Interface and IP: peerlink.4094 192.168.10.2
+                      Backup IP: 192.168.244.155 (active)
+                     System MAC: 44:38:39:ff:ff:ff
 
 
-CLAG Interfaces
-Our Interface    Peer Interface   CLAG Id  Conflicts  Proto-Down
------------      ---------------  -------  ---------  ----------
-bond-m1          bond-m1          1        -          -
-bond-m2          bond-m2          2        -          -
-bond-up          bond-up          3        -          -
-```
+  CLAG Interfaces
+  Our Interface    Peer Interface   CLAG Id  Conflicts  Proto-Down
+  -----------      ---------------  -------  ---------  ----------
+  bond-m1          bond-m1          1        -          -
+  bond-m2          bond-m2          2        -          -
+  bond-up          bond-up          3        -          -
+  ```,
+)
 \
 #blue[The peer is alive] : le Peer Link entre Switch-1 et Switch2 est fonctionnel.
 
@@ -240,47 +308,56 @@ Les trois agrégats (bond-m1, bond-m2, bond-up) sont synchronisés sans conflit 
 \
 \
 #underline[Switch-2]:
-```bash
-cumulus@sw2:~$ net show clag
-The peer is alive
-    Our Priority, ID, and Role: 2000 00:0c:29:64:76:96 secondary
-   Peer Priority, ID, and Role: 1000 00:0c:29:45:30:fe primary
-         Peer Interface and IP: peerlink.4094 192.168.10.1
-                    Backup IP: 192.168.244.154 (active)
-                   System MAC: 44:38:39:ff:ff:ff
+#grid(
+  inset: 8pt,
+  gutter: 3pt,
+  fill: rgb("e4e4ea"),
+  ```bash
+  cumulus@sw2:~$ net show clag
+  The peer is alive
+      Our Priority, ID, and Role: 2000 00:0c:29:64:76:96 secondary
+     Peer Priority, ID, and Role: 1000 00:0c:29:45:30:fe primary
+           Peer Interface and IP: peerlink.4094 192.168.10.1
+                      Backup IP: 192.168.244.154 (active)
+                     System MAC: 44:38:39:ff:ff:ff
 
 
-CLAG Interfaces
-Our Interface    Peer Interface   CLAG Id  Conflicts  Proto-Down
------------      ---------------  -------  ---------  ----------
-bond-m1          bond-m1          1        -          -
-bond-m2          bond-m2          2        -          -
-bond-up          bond-up          3        -          -
-```
+  CLAG Interfaces
+  Our Interface    Peer Interface   CLAG Id  Conflicts  Proto-Down
+  -----------      ---------------  -------  ---------  ----------
+  bond-m1          bond-m1          1        -          -
+  bond-m2          bond-m2          2        -          -
+  bond-up          bond-up          3        -          -
+  ```,
+)
 \
 
 On peut vérifier l'état du bond sur les clients avec `cat /proc/net/bondinf/bond0`.w \ \
-
-```bash
-Bonding Mode: IEEE 802.3ad Dynamic link aggregation
-Transmit Hash Policy: layer2 (0)
-MII Status: up
-MII Polling Interval (ms): 100
-
-
-802.3ad info
-LACP active: on
-LACP rate: fast
-Aggregator selection policy (ad_select): stable
+#grid(
+  inset: 8pt,
+  gutter: 3pt,
+  fill: rgb("e4e4ea"),
+  ```bash
+  Bonding Mode: IEEE 802.3ad Dynamic link aggregation
+  Transmit Hash Policy: layer2 (0)
+  MII Status: up
+  MII Polling Interval (ms): 100
 
 
-Slave Interface: ens36
-MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
+  802.3ad info
+  LACP active: on
+  LACP rate: fast
+  Aggregator selection policy (ad_select): stable
 
 
-Slave Interface: ens37
-MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
-```
+  Slave Interface: ens36
+  MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
+
+
+  Slave Interface: ens37
+  MII Status: up  |  Speed: 1000 Mbps  |  Link Failure Count: 0
+  ```,
+)
 
 \
 Identique sur la Machine-2.
@@ -303,14 +380,58 @@ En faisant une capture de trame avant de couper un switch, on peut oberver les c
   image("../figures/3/wireshark1.png", width: 100%),
   caption: [communication normale entre les switch avant coupure],
 )
+#table(
+  columns: (1fr, auto, auto),
+  inset: 5pt,
+  table.header([*Nom du Flag*], [*État*], [*Description*]),
+  [LACP Activity], [Active (1)], [Le port transmet des trames LACP activement.],
+  [LACP Timeout], [Short (1)], [Utilisation d'un délai court (1s) pour une détection rapide.],
+  [Aggregation], [Yes (1)], [Le lien est considéré comme agrégeable.],
+  [Synchronization], [In Sync (1)], [Le lien est prêt à transmettre des données.],
+  [Collecting], [Enabled (1)], [Le port reçoit du trafic entrant.],
+  [Distributing], [Enabled (1)], [Le port distribue du trafic sortant.],
+  [Defaulted], [No (0)], [Utilise les infos reçues du partenaire (pas de valeurs par défaut)],
+  [Expired], [No (0)], [La session LACP n'a pas expiré],
+)
 
 On lance un ping Machine-1 #sym.arrow.l.r.double Machine-2, puis on éteint le Switch-1.
-
-```bash
---- 192.168.2.1 ping statistics ---
-99 packets transmitted, 97 received, 2.0202% packet loss, time 98255ms
-rtt min/avg/max/mdev = 2.315/3.127/5.782/0.614 ms
-```
+#figure(
+  image("../figures/3/image5.png", width: 80%),
+  caption: [Ping Machine-1 $<=>$ Machine-2],
+)
+Seulement 2 paquets perdus sur 99 lors de la coupure de Switch-1. Les 2 pertes correspondent au délai minimal de détection MII (bond-miimon 100 ms) et de basculement des flux du bond0 des machines vers le seul lien restant (ens37 vers Switch-2).
+\
 \
 
-Seulement 2 paquets perdus sur 99 lors de la coupure de Switch-1. Les 2 pertes correspondent au délai minimal de détection MII (bond-miimon 100 ms) et de basculement des flux du bond0 des machines vers le seul lien restant (ens37 vers Switch-2).
+#figure(
+  image("../figures/3/image6.png", width: 80%),
+  caption: [Capture de trame LACP sur Switch-2],
+)
+\
+#figure(
+    image("../figures/3/new/image11.png", width: 80%),
+    caption: [État du bonding sur Switch-2 après coupure]
+) 
+
+\
+Moment de la coupure :
+#figure(
+  grid(
+    gutter: 8pt,
+    image("../figures/3/image2.png", width: 80%),
+    image("../figures/3/wireshark3.png", width: 80%),
+  ),
+
+  caption: [Capture sur Switch-2],
+)
+Le flag a changé et on ne retrouve pas les états Collecting et  Distributing. \
+\
+Quelques trames plus tard, on peut lire :
+#figure(
+  image("../figures/3/wireshark2.png"),
+  caption: [],
+)
+
+// L'état de LACP passe à _Out of Sync_. \
+\
+

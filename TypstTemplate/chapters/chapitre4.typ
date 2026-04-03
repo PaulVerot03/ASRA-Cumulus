@@ -76,6 +76,7 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
   columns: (1fr),
   inset: 8pt,
   gutter: 3pt,
+  row-gutter: 12pt,
   fill: rgb("e4e4ea"),
   raw(("
     #Switch 1
@@ -286,7 +287,7 @@ Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et r
   caption: [Ping de M1 $<=>$ M2]
 )
 
-On constate cependant une perte de paquet pendant #sym.tilde 4 sec, due probablement au MLAG sur les switch 1 et 2, qui ont du detecter la perte du lien et agir avec un peu de delai (bond-MII = 100ms) et se re-syncroniser.
+On constate cependant une perte de paquet pendant #sym.tilde 4 sec, due au MLAG sur les switch 1 et 2, qui ont du detecter la perte du lien et agir avec un peu de delai (bond-MII = 100ms) et se re-syncroniser.
 #figure(
   grid(
   image("../figures/4/image2.png", width: 70%),
