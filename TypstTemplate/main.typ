@@ -35,12 +35,15 @@
   fr: (
     title: "Projet d'Administration des Systèmes et des Réseaux II",
     theme: "Architecture de réseaux avec Cumulus et Debian",
-    abstract: "",
+    abstract: "Ce projet porte sur la mise en place de quatre architectures et sur l'étude des protocoles associés. Nous utiliseron Cumulus Linux et Debian 13 pour les switch et client respectivement. Notament, le projet porte sur la redondance des liens et des swictch ainsi que sur Spanning Tree.",
   ),
 
 )
 #show: mainmatter.with(skip-double: false)
-#set outline.entry(fill: line(length: 100%))
+#set outline.entry(fill: line(length: 100% , stroke:(thickness:1pt, dash:"loosely-dashed", paint:rgb("#003b69"))) )
+
+
+
 #outline(title: "Chapitres")
 #include("chapters/chapitre1.typ")
 #include("chapters/chapitre2.typ")

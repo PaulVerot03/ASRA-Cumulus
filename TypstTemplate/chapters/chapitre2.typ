@@ -8,7 +8,7 @@
 }
 = Redondance de liens
 #figure(
-  image("../figures/2/schema-Partie_2_-_STP_RSTP.png", width: 80%),
+  image("../figures/2/partie2_stp.drawio.png", width: 80%),
   caption: "Schéma du Réseau",
 )
 == Résumé des contraintes et des demandes

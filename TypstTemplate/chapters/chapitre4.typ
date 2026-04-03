@@ -2,6 +2,11 @@
 
 = Redondance de Routeurs
 == Architecture
+
+#figure(
+  image("../figures/4/partie4.drawio_1.png", width: 70%),
+  caption: "Maquette du réseau"
+)
 Pour répondre au besoin de tolérance de panne sur la couche distribution (niveau 3) tout en maintenant la redondance de la couche accès (niveau 2), nous avons ajouté un quatrième switch (Switch-4) pour servir de secour au Switch-3.
 
 \
@@ -31,6 +36,8 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 #strong("Sur les Client")
 #grid(
   columns: (1fr,1fr),
+  inset: 8pt,
+  fill: rgb("e4e4ea"),
   gutter: 5pt,
   ```bash
   # Machine-1
@@ -65,7 +72,7 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 )
 #strong("Sur les Switch :")
 #grid(
-  columns: (1fr,1fr),
+  columns: (1fr),
   inset: 8pt,
   gutter: 3pt,
   fill: rgb("e4e4ea"),
