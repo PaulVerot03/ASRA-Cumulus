@@ -136,3 +136,6 @@ On coupe à nouveau le lien avec ```bash sudo ip link set swp2 down```
 #strong[Observations :] Contrairement au test précédent, l'interruption a été quasi imperceptible. Tcpdump et ping montrent une continuité quasi parfaite du trafic : ```bash  67 packets transmitted, 67 received, 0% packet loss, time 66153ms```
 \ \
 #strong[Explication :] Le RSTP réduit drastiquement le temps de convergence (généralement < 1 sec) car il n'utilise pas de timers fixes pour changer l'état des ports.\ Il intègre un mécanisme de négociation active (_Proposal/Agreement_) entre les  switch voisins.\ Ainsi, lorsque le lien principal (swp2) tombe sur le Switch 1, le port alternatif (swp3) passe immédiatement à l'état Forwarding sans devoir traverser les phases d'écoute et d'apprentissage, réduisant ainsi toute perte de paquets significative lors de notre test. #footnote[#link("https://www.cisco.com/c/en/us/support/docs/lan-switching/spanning-tree-protocol/24062-146.html")[Understand Rapid Spanning Tree Protocol (802.1w)]]
+
+
+Comparaison : On constate une bien plus faible perte de paquet avec RSTP que avec STP. 

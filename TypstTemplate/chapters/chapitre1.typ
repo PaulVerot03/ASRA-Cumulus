@@ -337,7 +337,7 @@ Dans le fichier ```bash
       bond-slaves ens36 ens37
       bond-mode active-backup
       bond-miimon 100
-      bond-primary eth1
+      bond-primary ens36
 
   auto ens36
   iface ens36 inet manual

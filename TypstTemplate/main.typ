@@ -35,7 +35,7 @@
   fr: (
     title: "Projet d'Administration des Systèmes et des Réseaux II",
     theme: "Architecture de réseaux avec Cumulus et Debian",
-    abstract: "Ce projet porte sur la mise en place de quatre architectures et sur l'étude des protocoles associés. Nous utiliseron Cumulus Linux et Debian 13 pour les switch et client respectivement. Notament, le projet porte sur la redondance des liens et des swictch ainsi que sur Spanning Tree.",
+    abstract: "Ce projet porte sur la mise en place de quatre architectures et sur l'étude des protocoles associés. Nous utiliserons Cumulus Linux et Debian 13 pour les switch et client respectivement. Notamment, le projet porte sur la redondance des liens et des switchs ainsi que sur Spanning Tree.",
   ),
 
 )
@@ -50,5 +50,5 @@
 #include("chapters/chapitre3.typ")
 #include("chapters/chapitre4.typ")
 
-#show: appendix
-#include "appendices/appendix.typ"
+//#show: appendix
+//#include "appendices/appendix.typ"

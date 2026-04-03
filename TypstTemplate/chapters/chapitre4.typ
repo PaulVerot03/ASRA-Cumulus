@@ -22,13 +22,14 @@ Pour répondre au besoin de tolérance de panne sur la couche distribution (nive
 #grid(
   columns: 2,
   list(
-    [Machine-1 : LAN1 (vers SW1) et LAN2 (vers SW2)],
-    [Machine-2 : LAN3 (vers SW1) et LAN4 (vers SW2)]
+    [Machine-1 : LAN1, LAN2],
+    [Machine-2 : LAN3, LAN4]
   ),
   list(
     [Switch 1 : LAN1, LAN3, LAN5, LAN6, LAN7],
     [Switch 2 : LAN2, LAN4, LAN5, LAN6, LAN8],
-    [Switch 3 : LAN7, LAN8]
+    [Switch 3 : LAN7, LAN8, LAN 11, LAN 12],
+    [Switch-4 : LAN9, LAN 10, LAN 11, LAN 12]
   )  // Ajouter le switch 4
 )
 
@@ -277,13 +278,15 @@ Le tcpdump confirme que les requêtes ICMP continuent d'être transférées et r
 
 === Coupure dans la couche Disribution
 
- En coupant le Switch-3, le Switch-4 prend immédiatement le relais. Grâce au protocole VRR, Switch-4 partage la même passerelle (IP et adresse MAC virtuelle) que Switch-3. Par conséquent, les caches ARP des hôtes n'ont pas besoin d'expirer ou de se mettre à jour ; le trafic est instantanément traité par
+ En coupant le Switch-3, le Switch-4 prend rapidement le relais. Grâce au protocole VRR, Switch-4 partage la même passerelle (IP et adresse MAC virtuelle) que Switch-3. Par conséquent, les caches ARP des hôtes n'ont pas besoin d'expirer ou de se mettre à jour ; le trafic est rapidement traité par
  l'interface bond-down de Switch-4.
 
 #figure(
   image("../figures/4/image1.png", width: 70%),
-  caption: "Ping de M1 à M2"
+  caption: [Ping de M1 $<=>$ M2]
 )
+
+On constate cependant une perte de paquet pendant #sym.tilde 4 sec, due probablement au MLAG sur les switch 1 et 2, qui ont du detecter la perte du lien et agir avec un peu de delai (bond-MII = 100ms) et se re-syncroniser.
 #figure(
   grid(
   image("../figures/4/image2.png", width: 70%),
