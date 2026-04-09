@@ -13,6 +13,7 @@
   logo-transition: "Logo_blanc_centré.png",
   logo-slide: "Logo_bleu_centré.svg",
   text-size: 16pt,
+  text-font: "Libertinus Serif",
 )
 
 //#set text(8pt)
@@ -176,10 +177,17 @@
   #underline[Résultat :] coupure SW1 pendant ping M1↔M2\ \
   99 paquets envoyés   →   97 reçus   →   2 perdus (2.02%)
   #grid(
+    fill: rgb("e4e4ea"),
+    stroke: (x, y) => (
+      //top: if y > 0 { black },
+      left: if x >= 0 { black },
+    ),
+    gutter: 15pt,
     inset: 8pt,
     columns: (1fr, 1fr, 1fr),
-    [2 paquets perdus], [100ms \ Délai `bond-miimon`], [0% Perte de paquets],
+    [2 paquets perdus], [100ms \ Délai `bond-miimon`], [Perte minimale de paquets],
   )
+
   #underline[Mécanisme de bascule]
   + bond-miimon (100ms) détecte la perte du lien vers SW1
   + bond0 bascule tout le trafic sur l'interface restante (ens37 → SW2)
@@ -246,12 +254,13 @@
 
       Mécanisme VRR :
       - SW4 partage déjà la même VIP
-        - MAC: 00:00:5E:00:01:10/20
-      - Cache ARP inchangé sur M1/M2
+        - MAC: 00:00:5E:00:01:10 → 192.168.1.254/24
+        - MAC: 00:00:5E:00:01:20 → 192.168.2.254/24
+      //- Cache ARP inchangé sur M1/M2
       - bond-down/SW4 reprend le routage
 
       Délai résiduel :\
-      MLAG doit détecter la perte du lien vers SW3 (bond-miimon 100ms) et re-synchroniser
+      MLAG doit détecter la perte du lien vers SW3 (`bond-miimon 100ms`) et re-synchroniser
 
     ],
   )
