@@ -156,7 +156,7 @@
     columns: (55%, auto),
     rows: 2,
     gutter: 10pt,
-    figure(image("partie3.drawio.png", width: 100%), caption: none),
+    figure(image("schema-p3.drawio.png", width: 100%), caption: none),
     [
       #grid(
         //fill: rgb("#d1d1d1"),
@@ -213,7 +213,7 @@
     columns: (55%, auto),
     rows: 2,
     gutter: 10pt,
-    figure(image("partie4.drawio_1.png", width: 100%), caption: none),
+    figure(image("schema-p4.drawio.png", width: 100%), caption: none),
     [
       #grid(
         //fill: rgb("#d1d1d1"),
