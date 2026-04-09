@@ -3,7 +3,7 @@
 #show: sorbonne-template.with(
   title: [Projet ASRA II],
   subtitle: [Architecture réseau et switching avec Cumulus Linux & Debian],
-  author: [Thony LENG, Paul VEROT],
+  author: [Tony LENG, Paul VEROT],
   affiliation: [Master I CNS-SR],
   faculty: "univ", // Options: "univ" (blue), "sante" (red), "sciences" (light blue), "lettres" (yellow)
   date: datetime.today().display(),
@@ -16,7 +16,6 @@
   text-font: "Libertinus Serif",
 )
 
-//#set text(8pt)
 = Serveur NFS
 
 #figure-slide(
@@ -38,7 +37,7 @@
         inset: 8pt,
         gutter: 3pt,
         align: left,
-        [#strong("Contraintes :")
+        [#strong("Contraintes :")\
           SW1 & SW2 : niveau 2 uniquement \
           SW3 : niveau 3 (routage inter-VLAN + firewall) \
           Isoler M1 / M2 mais accès commun au serveur NFS \
@@ -59,7 +58,7 @@
 #slide[
   #strong("Résultats :")
   - Transfert opérationel : tout les fichiers transmis sont visibles sur le seveur
-  - Isolation totale : les machines qui ne doivent pas communiquer ne peuvent pas
+  - Isolation totale : les machines qui ne doivent pas communiquer ne le peuvent pas
     - Ping M1 #sym.arrow.l.r M2 : 100% packet loss
   - Accès restreint : M2 ne peut pas accéder au partage désigné à M1
   - Tolérance à la panne : communication opérationelles même avec un lien coupé
@@ -68,8 +67,16 @@
 
 
 ]
-
+#let discarding = table.cell(
+  fill: orange.lighten(60%),
+)[Discarding]
 = STP et RSTP
+#figure-slide[
+  #figure(
+    image("partie2_stp.drawio.png", width: 60%),
+  )
+]
+
 #slide[
   #grid(
     columns: (45%, auto),
@@ -83,8 +90,9 @@
       \
 
       #strong("Solution :")\
-      sudo mstpctl setforcevers bridge stp \
-      sudo mstpctl setforcevers bridge rstp \
+      ```bash
+      sudo mstpctl setforcevers bridge stp 
+      sudo mstpctl setforcevers bridge rstp ```
       Root Bridge : SW2 (MAC la plus faible, prio 32768) \
       Port bloqué : swp3/SW1 → rôle Alternate (Discarding) \
     ],
@@ -96,7 +104,7 @@
         table.header([*Switch*], [*Port*], [*Rôle*], [*État*]),
         [SW1], [swp2], [root], [Forwarding],
         [SW1], [swp1], [designated], [Forwarding],
-        [SW1], [swp3], [alternate], [discarding],
+        [SW1], [swp3], [alternate], discarding,
         [SW2], [swp1-3], [designated], [Forwarding],
         [SW3], [swp2], [root], [Forwarding],
         [SW3], [swp1,3], [designated], [Forwarding],
@@ -112,10 +120,10 @@
     [
       #strong[STP (802.1D)] \
       #underline("Observations :") \
-      Paquets envoyés : 51
-      Paquets reçus : 22
-      Perte : 56.86%
-      Durée interruption : ~30 s
+      Paquets envoyés : 51 \
+      Paquets reçus : 22 \
+      Perte : 56.86% \
+      Durée interruption : ~30 s \
       Séquences perdues : icmp_seq 11→39
       \
       \
@@ -128,10 +136,10 @@
     [
       #strong[RSTP (802.1w)] \
       #underline("Observations :") \
-      Paquets envoyés : 67
-      Paquets reçus : 67
-      Perte : 0%
-      Durée interruption : < 1 s
+      Paquets envoyés : 67 \
+      Paquets reçus : 67 \
+      Perte : 0% \
+      Durée interruption : < 1 s \
       Continuité quasi parfaite
       \
       \
@@ -164,7 +172,7 @@
         [#strong("Solution :")\
           LACP 802.3ad : chaque machine connectée aux 2 switchs \
           Peer Link SW1↔SW2 (swp3+swp4) \
-          `clagd-sys-mac` : MAC partagée \
+          `clagd-sys-mac` : 44:38:39:FF:FF:FF \
           #sym.arrow.curve.r 1 switch logique \
           //Backup IP : anti split-brain
         ],
@@ -220,10 +228,10 @@
           de délai de bascule
 
         ],
-        [#strong("Protocole : VRR Cumulus :")\
+        [#strong("Protocole :") `VRR Cumulus`\
           SW3 & SW4 partagent :\
           IP virt. 192.168.1.254 & 192.168.2.254\
-          //MAC virt. 00:00:5E:00:01:10/20\
+          MAC virt. 00:00:5E:00:01:10 / 00:00:5E:00:01:20\
           //address-virtual dans /e/n/interfaces\
           Cache ARP inchangé → bascule instantanée\
 
@@ -236,7 +244,7 @@
   #grid(
     columns: (1fr, 1fr),
     [#strong("Panne couche access (SW1)")\
-      65 paquets envoyés / 62 reçus | Perte : 4.6% \
+      65 paquets envoyés / 62 reçus | Perte : 4.6% (la perte de paquets apparait avant la coupure)\
       Délai visible : ~7ms à la req. N°53
 
       Mécanisme :
@@ -268,5 +276,5 @@
 #ending-slide(
   title: [Merci pour votre attention !],
   subtitle: [Des Questions?],
-  contact: ([Thony LENG & Paul VEROT], "github.com/PaulVerot03/ASRA-Cumulus"),
+  contact: ([Tony LENG & Paul VEROT], "github.com/PaulVerot03/ASRA-Cumulus"),
 )
